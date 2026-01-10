@@ -1,0 +1,4 @@
+google-adk
+a2a-sdk
+a2ui
+python-dotenv

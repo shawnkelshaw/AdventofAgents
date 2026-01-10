@@ -48,3 +48,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# A2UI repository (cloned for reference)
+A2UI/

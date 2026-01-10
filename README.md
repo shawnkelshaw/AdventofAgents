@@ -8,15 +8,17 @@ This project implements a multi-agent system that coordinates vehicle informatio
 
 ## Agents
 
-### 1. Calendar Agent ✅ COMPLETE
-- **Status**: Fully functional
+### 1. Calendar Agent ✅ COMPLETE + A2UI ENABLED
+- **Status**: Fully functional with A2UI support
 - **Features**:
   - Google Calendar integration via Integration Connectors
   - OAuth2 authentication
   - Lists available appointment slots
   - Creates calendar events with proper timezone handling
   - Sends email invitations to customers
+  - **A2UI support**: Generates rich interactive UI components (time slot cards, booking forms, confirmation screens)
 - **Location**: `calendar_agent/`
+- **Documentation**: See `docs/A2UI_INTEGRATION.md`
 
 ### 2. Vehicle Intake Agent 🚧 IN PROGRESS
 - **Status**: Basic implementation
@@ -85,7 +87,7 @@ AdventofAgents/
 
 ## Milestones
 
-### Milestone 1: Calendar Agent Integration ✅
+### Milestone 1: Calendar Agent Integration ✅ CLOSED
 - [x] Set up Google Calendar OAuth2 connection
 - [x] Implement Integration Connectors entity operations
 - [x] List available appointment slots
@@ -93,11 +95,27 @@ AdventofAgents/
 - [x] Send email invitations
 - [x] Fix timezone handling
 
+### Milestone 1.5: A2UI Integration ✅ CLOSED
+- [x] Integrate A2UI schema and format
+- [x] Create time slot selection UI template
+- [x] Create booking form UI template
+- [x] Create confirmation UI template
+- [x] Test A2UI JSON generation
+- [x] Document A2UI integration
+
 ### Milestone 2: Multi-Agent Orchestration 🚧
 - [ ] Implement vehicle intake agent
 - [ ] Implement orchestrator agent
 - [ ] Test agent handoffs
 - [ ] End-to-end workflow testing
+
+### Milestone 3: A2A Protocol Integration 📋 PLANNED
+- [ ] Install A2A SDK dependencies
+- [ ] Create A2A server wrapper for calendar agent
+- [ ] Implement agent executor with UI event handling
+- [ ] Configure A2UI shell client connection
+- [ ] Test full interactive UI rendering
+- [ ] Document A2A integration
 
 ## Technical Details
 
@@ -107,11 +125,20 @@ AdventofAgents/
 - Timezone: `America/New_York` (configurable)
 - Datetime format: `YYYY-MM-DD HH:MM:SS`
 
+### A2UI Integration
+- Agent generates declarative JSON UI descriptions
+- Three UI templates: time slot selection, booking form, confirmation
+- Data binding with path references (e.g., `/slots/0/date`)
+- Action handlers for button clicks and form submissions
+- Framework-agnostic format works across web, mobile, Flutter, React
+- See `docs/A2UI_INTEGRATION.md` for details
+
 ### Key Learnings
 1. Integration Connectors use simplified field names (capitalized)
 2. Entity operations are preferred over raw REST API actions
 3. `TimeZone` field is required for proper timezone handling
 4. OAuth 2.0 Web application credentials needed (not Desktop)
+5. A2UI provides rich UI capabilities while maintaining security through declarative format
 
 ## License
 
