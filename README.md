@@ -20,13 +20,26 @@ This project implements a multi-agent system that coordinates vehicle informatio
 - **Location**: `calendar_agent/`
 - **Documentation**: See `docs/A2UI_INTEGRATION.md`
 
-### 2. Vehicle Intake Agent 🚧 IN PROGRESS
-- **Status**: Basic implementation
+### 2. Vehicle Intake Agent ✅ COMPLETE
+- **Status**: Fully functional
+- **Features**:
+  - Conversational vehicle information collection
+  - Collects: year, make, model, trim, mileage, color, condition
+  - Provides trade-in value estimates
+  - Stores data in shared state
 - **Location**: `vehicle_intake_agent/`
+- **Documentation**: See `docs/MULTI_AGENT_ORCHESTRATION.md`
 
-### 3. Orchestrator Agent 🚧 IN PROGRESS
-- **Status**: Basic implementation
+### 3. Orchestrator Agent ✅ COMPLETE
+- **Status**: Fully functional
+- **Features**:
+  - Coordinates complete vehicle trade-in workflow
+  - LLM Transfer pattern for dynamic routing
+  - Delegates to vehicle intake and calendar agents
+  - Maintains context throughout conversation
+  - Smooth agent handoffs
 - **Location**: `orchestrator_agent/`
+- **Documentation**: See `docs/MULTI_AGENT_ORCHESTRATION.md`
 
 ## Setup
 
@@ -103,11 +116,12 @@ AdventofAgents/
 - [x] Test A2UI JSON generation
 - [x] Document A2UI integration
 
-### Milestone 2: Multi-Agent Orchestration 🚧
-- [ ] Implement vehicle intake agent
-- [ ] Implement orchestrator agent
-- [ ] Test agent handoffs
-- [ ] End-to-end workflow testing
+### Milestone 2: Multi-Agent Orchestration ✅ CLOSED
+- [x] Implement vehicle intake agent
+- [x] Implement orchestrator agent with LLM Transfer pattern
+- [x] Test agent handoffs and state management
+- [x] End-to-end workflow testing
+- [x] Document multi-agent orchestration
 
 ### Milestone 3: A2A Protocol Integration 📋 PLANNED
 - [ ] Install A2A SDK dependencies
