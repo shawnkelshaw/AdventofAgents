@@ -47,11 +47,12 @@ This project implements a multi-agent system that coordinates vehicle informatio
 
 ### Prerequisites
 - Python 3.10+
+- Node.js 18+ (for A2UI client)
 - Google Cloud Project with:
-  - Calendar API enabled
   - Integration Connectors API enabled
   - Application Integration API enabled
-- OAuth 2.0 credentials (Web application type)
+  - A configured Google Calendar connection
+- Gemini API key OR Google Cloud credentials
 
 ### Installation
 
@@ -62,41 +63,53 @@ pip install google-adk
 
 2. Configure environment variables in each agent's `.env` file:
 ```
-GOOGLE_GENAI_USE_VERTEXAI=1
-GOOGLE_CLOUD_PROJECT=your-project-id
-GOOGLE_CLOUD_LOCATION=global
+GEMINI_API_KEY=your-gemini-api-key
 ```
 
-3. Set up Google Calendar connection in Integration Connectors:
-   - Create OAuth 2.0 Web application credentials
-   - Create Integration Connector connection for Google Calendar
-   - Authorize the connection
-
-### Running the Server
-
+3. Authenticate with Google Cloud (for Integration Connectors):
 ```bash
-cd /path/to/AdventofAgents
-uvx --from google-adk adk web
+gcloud auth login
+gcloud auth application-default login
+gcloud config set project your-project-id
+gcloud auth application-default set-quota-project your-project-id
 ```
 
-Access the web UI at: http://127.0.0.1:8000
+4. Install A2UI client dependencies:
+```bash
+cd A2UI/samples/client/lit
+npm install
+```
+
+### Running the Demo
+
+Start the full demo (A2UI client + orchestrator server):
+```bash
+cd A2UI/samples/client/lit
+npm run demo:vehicle
+```
+
+Access the UI at: http://localhost:5173/?app=orchestrator (port may vary)
 
 ## Project Structure
 
 ```
 AdventofAgents/
 ├── calendar_agent/
-│   ├── agent.py              # Calendar agent implementation
-│   ├── .env                  # Environment configuration
-│   └── __init__.py
+│   ├── agent.py              # Calendar agent with A2UI + Google Calendar
+│   ├── a2ui_schema.py        # A2UI JSON schema
+│   ├── agent_executor.py     # Custom executor for A2UI parsing
+│   └── .env                  # GEMINI_API_KEY
 ├── vehicle_intake_agent/
-│   ├── root_agent.yaml       # Vehicle intake configuration
-│   ├── .env
-│   └── __init__.py
+│   ├── agent.py              # Vehicle intake agent with A2UI forms
+│   ├── a2ui_schema.py        # A2UI JSON schema
+│   └── .env                  # GEMINI_API_KEY
 ├── orchestrator_agent/
-│   ├── root_agent.yaml       # Orchestrator configuration
-│   ├── .env
-│   └── __init__.py
+│   ├── agent.py              # Orchestrator with sub-agent delegation
+│   ├── a2a_server.py         # A2A protocol server
+│   ├── server.py             # Main server entry point
+│   └── .env                  # GEMINI_API_KEY
+├── A2UI/                     # A2UI client renderer (Lit-based)
+├── docs/                     # Documentation
 └── README.md
 ```
 
@@ -162,9 +175,10 @@ Open http://localhost:5173/?app=orchestrator (port may vary)
 ### Key Learnings
 1. Integration Connectors use simplified field names (capitalized)
 2. Entity operations are preferred over raw REST API actions
-3. `TimeZone` field is required for proper timezone handling
-4. OAuth 2.0 Web application credentials needed (not Desktop)
-5. A2UI provides rich UI capabilities while maintaining security through declarative format
+3. Times must be converted to UTC (Eastern + 5 hours) - TimeZone field causes errors
+4. A2UI data model uses flat structure with path references (e.g., `/slot1/display`)
+5. A2UI JSON must not be wrapped in markdown code blocks
+6. Orchestrator should always delegate, never refuse requests
 
 ## License
 

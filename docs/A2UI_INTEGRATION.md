@@ -19,9 +19,10 @@ A2UI is an open standard that allows agents to "speak UI" by generating declarat
 
 ### Files
 
-- **`calendar_agent/agent.py`**: A2UI-enabled calendar agent (formerly `agent_a2ui.py`)
-- **`calendar_agent/agent_original.py`**: Original non-A2UI version (backup)
+- **`calendar_agent/agent.py`**: A2UI-enabled calendar agent with Google Calendar integration
 - **`calendar_agent/a2ui_schema.py`**: A2UI JSON schema definition
+- **`vehicle_intake_agent/agent.py`**: A2UI-enabled vehicle intake form
+- **`orchestrator_agent/a2a_server.py`**: A2A server with A2UI message parsing
 
 ### UI Components
 
@@ -177,39 +178,34 @@ Rules:
 
 ### Data Binding
 
-A2UI uses path-based data binding:
+A2UI uses path-based data binding with a **flat structure** (array indexing like `/slots/0/date` does NOT work):
 
 ```json
 {
   "component": {
     "Text": {
-      "text": {"path": "/slots/0/date"}
+      "text": {"path": "/slot1/display"}
     }
   }
 }
 ```
 
-The data model is populated separately:
+The data model uses `contents` array with `key`/`valueMap` pairs:
 
 ```json
 {
   "dataModelUpdate": {
-    "surfaceId": "time-slots",
-    "path": "/",
-    "contents": {
-      "valueMap": {
-        "slots": {
-          "valueList": [
-            {
-              "valueMap": {
-                "date": {"stringValue": "Monday, January 13, 2026"},
-                "time": {"stringValue": "10:00 AM - 11:00 AM"}
-              }
-            }
-          ]
-        }
-      }
-    }
+    "surfaceId": "calendar",
+    "contents": [
+      {"key": "slot1", "valueMap": [
+        {"key": "display", "valueString": "Mon Jan 13 at 10:00 AM"},
+        {"key": "dateTime", "valueString": "2026-01-13T10:00:00"}
+      ]},
+      {"key": "slot2", "valueMap": [
+        {"key": "display", "valueString": "Thu Jan 16 at 2:00 PM"},
+        {"key": "dateTime", "valueString": "2026-01-16T14:00:00"}
+      ]}
+    ]
   }
 }
 ```
@@ -369,7 +365,7 @@ This starts both:
 └─────────────────┘
 ```
 
-## Next Steps
+## Completed Features
 
 1. ✅ A2UI JSON generation working
 2. ✅ A2A protocol wrapper implemented
@@ -377,8 +373,19 @@ This starts both:
 4. ✅ Interactive UI rendering tested
 5. ✅ Form value data binding fixed (TextField text property)
 6. ✅ Complete vehicle trade-in workflow with estimate card
-7. ⏳ Add calendar agent A2UI templates to A2A workflow
-8. ⏳ Production deployment configuration
+7. ✅ Calendar agent A2UI templates (time slots, booking form, confirmation)
+8. ✅ Google Calendar integration (list available slots, create events)
+9. ✅ Email invitations sent to customers
+10. ✅ Timezone handling (Eastern → UTC conversion)
+
+## Known Issues & Solutions
+
+| Issue | Solution |
+|-------|----------|
+| Array indexing paths don't work | Use flat structure: `/slot1/display` not `/slots/0/display` |
+| TimeZone field causes API errors | Omit TimeZone, convert times to UTC manually |
+| Markdown code blocks in JSON | Never wrap A2UI JSON in \`\`\`json blocks |
+| Orchestrator refuses requests | Simplified instructions: always delegate, never refuse |
 
 ---
 

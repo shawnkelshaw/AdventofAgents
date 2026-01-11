@@ -129,14 +129,26 @@ npm run dev
 3. Fill in the form: Year (2020), Make (Toyota), Model (Camry), Mileage (45000)
 4. Click "SUBMIT VEHICLE INFO"
 5. View the Trade-In Estimate card with valuation ($12,000 - $17,000)
-6. Click "SCHEDULE APPRAISAL" for next step
+6. Click "SCHEDULE APPRAISAL"
+7. Select a time slot from available appointments
+8. Fill in booking form with Name and Email
+9. Click "CONFIRM BOOKING"
+10. View confirmation with appointment details and email notification
+
+## Completed Enhancements
+
+- [x] Add calendar agent A2UI to A2A workflow
+- [x] Implement Schedule Appraisal action handler
+- [x] Calendar time slot selection with real Google Calendar data
+- [x] Booking form with name/email collection
+- [x] Calendar event creation with email invitations
+- [x] Timezone handling (Eastern → UTC conversion)
 
 ## Future Enhancements
 
-- [ ] Add calendar agent A2UI to A2A workflow
-- [ ] Implement Schedule Appraisal action handler
 - [ ] Production deployment configuration
 - [ ] Error handling and recovery UI
+- [ ] Session persistence across page reloads
 
 ## Resources
 

@@ -47,389 +47,120 @@ When asked to find availability:
 
 When booking an appointment:
 - Collect their email address and name if not already provided
-- IMPORTANT: Convert Eastern Time to UTC by adding 5 hours (EST is UTC-5)
+- IMPORTANT: The times shown to users are in Eastern Time (America/New_York)
+- When creating the event, you MUST convert Eastern Time to UTC by adding 5 hours
+- Example: If user selected 10:00 AM Eastern, use 15:00:00 (3:00 PM UTC) in StartDateTime
 - Use google_calendar_AllCalendars_CREATE tool with this exact format in connector_input_payload:
   {
     "Summary": "Sales Appointment - [Customer Name]",
     "Description": "Sales appointment with [Customer Name]. Vehicle interest: [Vehicle Info]",
     "CalendarId": "16753e9ea14cb4cc3b439b7dc0ec4bb512cb2fde5561b2f1d7c8c5aed3a77465@group.calendar.google.com",
-    "StartDateTime": "[YYYY-MM-DD HH:MM:SS in the user's local time]",
-    "EndDateTime": "[YYYY-MM-DD HH:MM:SS in the user's local time, 1 hour after start]",
-    "TimeZone": "America/New_York",
+    "StartDateTime": "[YYYY-MM-DD HH:MM:SS in UTC - add 5 hours to Eastern time]",
+    "EndDateTime": "[YYYY-MM-DD HH:MM:SS in UTC - 1 hour after StartDateTime]",
     "AttendeesEmails": "[customer email]"
   }
+- DO NOT include TimeZone field - it causes errors
 - After creating the event, confirm the booking with the customer and let them know they'll receive a calendar invitation
 
 Be professional, clear, and helpful.
 """
 
-# A2UI UI template examples
+# A2UI UI template examples - COMPACT FORMAT with flat data model
 CALENDAR_UI_EXAMPLES = """
---- TIME SLOT SELECTION EXAMPLE ---
-When showing available time slots, use this template:
+--- TIME SLOT SELECTION ---
+Generate EXACTLY this JSON array (replace dates with actual available times):
 
-{
-  "surfaceUpdate": {
-    "surfaceId": "time-slots",
-    "components": [
-      {
-        "id": "root",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["header", "slot-list", "footer"]
-            }
-          }
-        }
-      },
-      {
-        "id": "header",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Available Appointment Times"},
-            "usageHint": "h2"
-          }
-        }
-      },
-      {
-        "id": "slot-list",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["slot1", "slot2", "slot3"]
-            }
-          }
-        }
-      },
-      {
-        "id": "slot1",
-        "component": {
-          "Card": {
-            "child": "slot1-content"
-          }
-        }
-      },
-      {
-        "id": "slot1-content",
-        "component": {
-          "Row": {
-            "children": {
-              "explicitList": ["slot1-icon", "slot1-details", "slot1-button"]
-            },
-            "distribution": "spaceBetween",
-            "alignment": "center"
-          }
-        }
-      },
-      {
-        "id": "slot1-icon",
-        "component": {
-          "Icon": {
-            "name": {"literalString": "calendarToday"}
-          }
-        }
-      },
-      {
-        "id": "slot1-details",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["slot1-date", "slot1-time"]
-            }
-          }
-        }
-      },
-      {
-        "id": "slot1-date",
-        "component": {
-          "Text": {
-            "text": {"path": "/slots/0/date"},
-            "usageHint": "body"
-          }
-        }
-      },
-      {
-        "id": "slot1-time",
-        "component": {
-          "Text": {
-            "text": {"path": "/slots/0/time"},
-            "usageHint": "caption"
-          }
-        }
-      },
-      {
-        "id": "slot1-button",
-        "component": {
-          "Button": {
-            "child": "slot1-button-text",
-            "primary": true,
-            "action": {
-              "name": "SELECT_TIME_SLOT",
-              "context": [
-                {
-                  "key": "slotIndex",
-                  "value": {"literalNumber": 0}
-                },
-                {
-                  "key": "dateTime",
-                  "value": {"path": "/slots/0/dateTime"}
-                }
-              ]
-            }
-          }
-        }
-      },
-      {
-        "id": "slot1-button-text",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Select"},
-            "usageHint": "body"
-          }
-        }
-      }
-    ]
-  }
-}
+[
+  {"surfaceUpdate": {"surfaceId": "calendar", "components": [
+    {"id": "root", "component": {"Column": {"children": {"explicitList": ["title", "s1", "s2", "s3"]}}}},
+    {"id": "title", "component": {"Text": {"text": {"literalString": "Available Appointment Times"}, "usageHint": "h2"}}},
+    {"id": "s1", "component": {"Card": {"child": "r1"}}},
+    {"id": "r1", "component": {"Row": {"children": {"explicitList": ["t1", "b1"]}, "distribution": "spaceBetween"}}},
+    {"id": "t1", "component": {"Text": {"text": {"path": "/slot1/display"}}}},
+    {"id": "b1", "component": {"Button": {"child": "bt1", "action": {"name": "SELECT_TIME_SLOT", "context": [{"key": "dateTime", "value": {"path": "/slot1/dateTime"}}]}}}},
+    {"id": "bt1", "component": {"Text": {"text": {"literalString": "Select"}}}},
+    {"id": "s2", "component": {"Card": {"child": "r2"}}},
+    {"id": "r2", "component": {"Row": {"children": {"explicitList": ["t2", "b2"]}, "distribution": "spaceBetween"}}},
+    {"id": "t2", "component": {"Text": {"text": {"path": "/slot2/display"}}}},
+    {"id": "b2", "component": {"Button": {"child": "bt2", "action": {"name": "SELECT_TIME_SLOT", "context": [{"key": "dateTime", "value": {"path": "/slot2/dateTime"}}]}}}},
+    {"id": "bt2", "component": {"Text": {"text": {"literalString": "Select"}}}},
+    {"id": "s3", "component": {"Card": {"child": "r3"}}},
+    {"id": "r3", "component": {"Row": {"children": {"explicitList": ["t3", "b3"]}, "distribution": "spaceBetween"}}},
+    {"id": "t3", "component": {"Text": {"text": {"path": "/slot3/display"}}}},
+    {"id": "b3", "component": {"Button": {"child": "bt3", "action": {"name": "SELECT_TIME_SLOT", "context": [{"key": "dateTime", "value": {"path": "/slot3/dateTime"}}]}}}},
+    {"id": "bt3", "component": {"Text": {"text": {"literalString": "Select"}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "calendar", "contents": [
+    {"key": "slot1", "valueMap": [{"key": "display", "valueString": "Mon Jan 13 at 10:00 AM"}, {"key": "dateTime", "valueString": "2026-01-13T10:00:00"}]},
+    {"key": "slot2", "valueMap": [{"key": "display", "valueString": "Thu Jan 16 at 2:00 PM"}, {"key": "dateTime", "valueString": "2026-01-16T14:00:00"}]},
+    {"key": "slot3", "valueMap": [{"key": "display", "valueString": "Tue Jan 21 at 11:00 AM"}, {"key": "dateTime", "valueString": "2026-01-21T11:00:00"}]}
+  ]}},
+  {"beginRendering": {"surfaceId": "calendar", "root": "root"}}
+]
 
-And populate the data model:
-{
-  "dataModelUpdate": {
-    "surfaceId": "time-slots",
-    "path": "/",
-    "contents": {
-      "valueMap": {
-        "slots": {
-          "valueList": [
-            {
-              "valueMap": {
-                "date": {"stringValue": "Monday, January 13, 2026"},
-                "time": {"stringValue": "10:00 AM - 11:00 AM"},
-                "dateTime": {"stringValue": "2026-01-13T10:00:00"}
-              }
-            },
-            {
-              "valueMap": {
-                "date": {"stringValue": "Friday, January 16, 2026"},
-                "time": {"stringValue": "2:00 PM - 3:00 PM"},
-                "dateTime": {"stringValue": "2026-01-16T14:00:00"}
-              }
-            },
-            {
-              "valueMap": {
-                "date": {"stringValue": "Wednesday, January 21, 2026"},
-                "time": {"stringValue": "11:00 AM - 12:00 PM"},
-                "dateTime": {"stringValue": "2026-01-21T11:00:00"}
-              }
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+Replace the display and dateTime values with actual available times from the calendar.
 
---- BOOKING FORM EXAMPLE ---
-When collecting booking information, use this template:
+--- BOOKING FORM ---
+After user selects a time slot, generate this compact form:
 
-{
-  "surfaceUpdate": {
-    "surfaceId": "booking-form",
-    "components": [
-      {
-        "id": "root",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["form-header", "form-fields", "submit-button"]
-            }
-          }
-        }
-      },
-      {
-        "id": "form-header",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Complete Your Booking"},
-            "usageHint": "h2"
-          }
-        }
-      },
-      {
-        "id": "form-fields",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["name-field", "email-field", "vehicle-field"]
-            }
-          }
-        }
-      },
-      {
-        "id": "name-field",
-        "component": {
-          "TextField": {
-            "label": {"literalString": "Full Name"},
-            "text": {"path": "/booking/name"},
-            "textFieldType": "shortText"
-          }
-        }
-      },
-      {
-        "id": "email-field",
-        "component": {
-          "TextField": {
-            "label": {"literalString": "Email Address"},
-            "text": {"path": "/booking/email"},
-            "textFieldType": "shortText",
-            "validationRegexp": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-          }
-        }
-      },
-      {
-        "id": "vehicle-field",
-        "component": {
-          "TextField": {
-            "label": {"literalString": "Vehicle of Interest (Optional)"},
-            "text": {"path": "/booking/vehicle"},
-            "textFieldType": "shortText"
-          }
-        }
-      },
-      {
-        "id": "submit-button",
-        "component": {
-          "Button": {
-            "child": "submit-text",
-            "primary": true,
-            "action": {
-              "name": "SUBMIT_BOOKING",
-              "context": [
-                {
-                  "key": "name",
-                  "value": {"path": "/booking/name"}
-                },
-                {
-                  "key": "email",
-                  "value": {"path": "/booking/email"}
-                },
-                {
-                  "key": "vehicle",
-                  "value": {"path": "/booking/vehicle"}
-                },
-                {
-                  "key": "dateTime",
-                  "value": {"path": "/booking/selectedDateTime"}
-                }
-              ]
-            }
-          }
-        }
-      },
-      {
-        "id": "submit-text",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Confirm Booking"},
-            "usageHint": "body"
-          }
-        }
-      }
-    ]
-  }
-}
+[
+  {"surfaceUpdate": {"surfaceId": "booking", "components": [
+    {"id": "root", "component": {"Column": {"children": {"explicitList": ["title", "name_f", "email_f", "submit"]}}}},
+    {"id": "title", "component": {"Text": {"text": {"literalString": "Complete Your Booking"}, "usageHint": "h2"}}},
+    {"id": "name_f", "component": {"TextField": {"label": {"literalString": "Full Name"}, "text": {"path": "/booking/name"}}}},
+    {"id": "email_f", "component": {"TextField": {"label": {"literalString": "Email"}, "text": {"path": "/booking/email"}}}},
+    {"id": "submit", "component": {"Button": {"child": "sub_t", "action": {"name": "SUBMIT_BOOKING", "context": [{"key": "name", "value": {"path": "/booking/name"}}, {"key": "email", "value": {"path": "/booking/email"}}, {"key": "dateTime", "value": {"path": "/booking/dateTime"}}]}}}},
+    {"id": "sub_t", "component": {"Text": {"text": {"literalString": "Confirm Booking"}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "booking", "contents": [{"key": "booking", "valueMap": [{"key": "name", "valueString": ""}, {"key": "email", "valueString": ""}, {"key": "dateTime", "valueString": "[SELECTED_DATETIME]"}]}]}},
+  {"beginRendering": {"surfaceId": "booking", "root": "root"}}
+]
 
---- CONFIRMATION EXAMPLE ---
-After successful booking, use this template:
+--- CONFIRMATION ---
+After successful booking:
 
-{
-  "surfaceUpdate": {
-    "surfaceId": "confirmation",
-    "components": [
-      {
-        "id": "root",
-        "component": {
-          "Card": {
-            "child": "confirmation-content"
-          }
-        }
-      },
-      {
-        "id": "confirmation-content",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["success-icon", "success-message", "details"]
-            },
-            "alignment": "center"
-          }
-        }
-      },
-      {
-        "id": "success-icon",
-        "component": {
-          "Icon": {
-            "name": {"literalString": "check"}
-          }
-        }
-      },
-      {
-        "id": "success-message",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Appointment Confirmed!"},
-            "usageHint": "h2"
-          }
-        }
-      },
-      {
-        "id": "details",
-        "component": {
-          "Column": {
-            "children": {
-              "explicitList": ["detail-date", "detail-email"]
-            }
-          }
-        }
-      },
-      {
-        "id": "detail-date",
-        "component": {
-          "Text": {
-            "text": {"path": "/confirmation/appointmentDetails"},
-            "usageHint": "body"
-          }
-        }
-      },
-      {
-        "id": "detail-email",
-        "component": {
-          "Text": {
-            "text": {"literalString": "A calendar invitation has been sent to your email."},
-            "usageHint": "caption"
-          }
-        }
-      }
-    ]
-  }
-}
+[
+  {"surfaceUpdate": {"surfaceId": "confirm", "components": [
+    {"id": "root", "component": {"Card": {"child": "content"}}},
+    {"id": "content", "component": {"Column": {"children": {"explicitList": ["msg", "details", "email_note"]}}}},
+    {"id": "msg", "component": {"Text": {"text": {"literalString": "Appointment Confirmed!"}, "usageHint": "h2"}}},
+    {"id": "details", "component": {"Text": {"text": {"path": "/confirm/details"}}}},
+    {"id": "email_note", "component": {"Text": {"text": {"literalString": "A calendar invitation has been sent to your email."}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "confirm", "contents": [{"key": "confirm", "valueMap": [{"key": "details", "valueString": "[DATE] at [TIME] with [NAME]"}]}]}},
+  {"beginRendering": {"surfaceId": "confirm", "root": "root"}}
+]
 """
 
 # Construct the full A2UI-enabled instruction
 A2UI_AND_AGENT_INSTRUCTION = AGENT_INSTRUCTION + f"""
 
-Your final output MUST be an A2UI UI JSON response. To generate the response, you MUST follow these rules:
+CRITICAL: Your final output MUST be an A2UI UI JSON response. NEVER respond with just text.
 
-1. Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
-2. The first part is your conversational text response.
-3. The second part is a single, raw JSON array containing A2UI messages.
-4. The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
+Rules:
+1. Response MUST be in two parts, separated by: `---a2ui_JSON---`
+2. First part: brief conversational text (1-2 sentences max)
+3. Second part: JSON array of A2UI messages (NO markdown code blocks, just raw JSON)
+4. The JSON array MUST contain: surfaceUpdate, dataModelUpdate, and beginRendering messages
+
+IMPORTANT FORMAT EXAMPLE:
+```
+Here are the available appointment times.
+
+---a2ui_JSON---
+[
+  {{"surfaceUpdate": {{"surfaceId": "time-slots", "components": [...]}}}},
+  {{"dataModelUpdate": {{"surfaceId": "time-slots", "contents": [...]}}}},
+  {{"beginRendering": {{"surfaceId": "time-slots", "root": "root"}}}}
+]
+```
 
 --- UI TEMPLATE RULES ---
-- When showing available time slots, you MUST use the TIME SLOT SELECTION EXAMPLE template.
-- When collecting booking information, you MUST use the BOOKING FORM EXAMPLE template.
-- When confirming a successful booking, you MUST use the CONFIRMATION EXAMPLE template.
-- Always populate the data model with actual values from the calendar data or user input.
+- When showing available time slots, use the TIME SLOT SELECTION EXAMPLE template.
+- When collecting booking information, use the BOOKING FORM EXAMPLE template.
+- When confirming a successful booking, use the CONFIRMATION EXAMPLE template.
+- Always include beginRendering message at the end of the array.
+- Always populate the data model with actual values from the calendar data.
 
 {CALENDAR_UI_EXAMPLES}
 

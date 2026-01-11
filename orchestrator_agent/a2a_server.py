@@ -92,6 +92,21 @@ class OrchestratorAgentExecutor(AgentExecutor):
                             mileage = action_context.get("mileage", "")
                             condition = action_context.get("condition", "good")
                             query = f"User submitted vehicle info: {year} {make} {model}, {mileage} miles, {condition} condition. Please provide a trade-in estimate."
+                        elif action_name == "schedule_appraisal":
+                            # User wants to schedule an appointment - transfer to calendar agent
+                            query = "The user wants to schedule an in-person appraisal appointment. Please transfer to the calendar agent to show available appointment times."
+                        elif action_name == "SELECT_TIME_SLOT":
+                            # User selected a time slot from calendar
+                            date_time = action_context.get("dateTime", "")
+                            slot_index = action_context.get("slotIndex", 0)
+                            query = f"User selected time slot {slot_index} with dateTime {date_time}. Please show the booking form to collect their name and email."
+                        elif action_name == "SUBMIT_BOOKING":
+                            # User submitted booking form - MUST create calendar event
+                            name = action_context.get("name", "")
+                            email = action_context.get("email", "")
+                            date_time = action_context.get("dateTime", "")
+                            vehicle = action_context.get("vehicle", "")
+                            query = f"IMPORTANT: The user has already provided vehicle info and selected a time slot. NOW you MUST use transfer_to_agent to delegate to calendar_agent to CREATE a calendar event. Customer: {name}, Email: {email}, DateTime: {date_time}. The calendar agent must use google_calendar_AllCalendars_CREATE to book the appointment and send an email invitation."
                         else:
                             query = f"User performed action: {action_name}"
         

@@ -32,8 +32,12 @@ wheels/
 
 # Virtual environments
 venv/
+.venv/
 ENV/
 env/
+
+# UV lock files (large)
+uv.lock
 
 # IDE
 .vscode/
@@ -49,10 +53,5 @@ Thumbs.db
 # Logs
 *.log
 
-# A2UI repository (cloned for reference)
-A2UI/
-
-# Virtual environment
-venv/
-env/
-ENV/
+# A2UI node_modules (keep A2UI source but ignore dependencies)
+A2UI/**/node_modules/
