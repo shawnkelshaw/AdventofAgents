@@ -321,18 +321,28 @@ This starts both:
 ### What's Working
 
 1. **Form Rendering**: Vehicle intake form displays with Year, Make, Model, Mileage fields
-2. **Button Actions**: Submit button triggers action and sends to server
-3. **A2UI Extension**: Client correctly requests and activates A2UI extension
-4. **Multi-Agent Workflow**: Orchestrator delegates to vehicle_intake_agent which generates A2UI
+2. **Form Value Binding**: User-entered values are captured and passed to the agent via action context
+3. **Button Actions**: Submit button triggers action with form data
+4. **Estimate Card**: Agent generates trade-in estimate card with valuation ($12k-$17k for 2020 Toyota Camry)
+5. **A2UI Extension**: Client correctly requests and activates A2UI extension
+6. **Multi-Agent Workflow**: Orchestrator delegates to vehicle_intake_agent which generates A2UI
 
-### Known Limitations
+### Key Implementation Details
 
-1. **Form Value Binding**: Form field values entered by users are not automatically synced to the A2UI data model. The action context receives empty strings instead of user-entered values. This is a limitation of the current A2UI Lit renderer's data binding implementation.
+1. **TextField Binding**: Use `text` property (not `value`) for data binding:
+   ```json
+   {"TextField": {"label": {"literalString": "Year"}, "text": {"path": "/vehicle/year"}}}
+   ```
 
-2. **Workaround**: For production use, consider:
-   - Using the A2UI Composer to generate tested form templates
-   - Implementing custom data binding in the client
-   - Using a text-based fallback for form data collection
+2. **Action Context**: Button actions include context with paths to form values:
+   ```json
+   {"action": {"name": "submit_vehicle_info", "context": [{"key": "year", "value": {"path": "/vehicle/year"}}]}}
+   ```
+
+3. **Data Model Initialization**: Initialize data model with empty values:
+   ```json
+   {"dataModelUpdate": {"surfaceId": "vehicle_form", "contents": [{"key": "vehicle", "valueMap": [...]}]}}
+   ```
 
 ### Architecture
 
@@ -365,12 +375,13 @@ This starts both:
 2. ✅ A2A protocol wrapper implemented
 3. ✅ A2UI shell client configured
 4. ✅ Interactive UI rendering tested
-5. ⏳ Fix form value data binding (client-side enhancement)
-6. ⏳ Add calendar agent A2UI templates
-7. ⏳ Production deployment configuration
+5. ✅ Form value data binding fixed (TextField text property)
+6. ✅ Complete vehicle trade-in workflow with estimate card
+7. ⏳ Add calendar agent A2UI templates to A2A workflow
+8. ⏳ Production deployment configuration
 
 ---
 
-**Status**: A2A/A2UI integration complete (proof-of-concept)  
+**Status**: A2A/A2UI integration complete and fully functional  
 **Last Updated**: January 11, 2026  
 **Version**: 0.8 (Public Preview)

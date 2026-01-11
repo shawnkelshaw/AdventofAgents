@@ -247,10 +247,39 @@ root_agent = LlmAgent(
 | Agent not found | Import error | Verify agent imports and paths |
 | State not shared | Missing output_key | Add output_key to agents |
 
-## A2UI Integration
+## A2UI Integration ✅ COMPLETE
 
-The calendar agent generates A2UI JSON for rich UI components:
+Both the vehicle intake agent and calendar agent generate A2UI JSON for rich UI components.
 
+### Vehicle Intake Agent A2UI
+```json
+{
+  "surfaceUpdate": {
+    "surfaceId": "vehicle_form",
+    "components": [
+      // Year, Make, Model, Mileage text fields
+      // Submit button with action context
+    ]
+  }
+}
+```
+
+After form submission, generates estimate card:
+```json
+{
+  "surfaceUpdate": {
+    "surfaceId": "estimate_card",
+    "components": [
+      // Trade-In Estimate heading
+      // Vehicle summary text
+      // Valuation range ($12,000 - $17,000)
+      // Schedule Appraisal button
+    ]
+  }
+}
+```
+
+### Calendar Agent A2UI
 ```json
 {
   "surfaceUpdate": {
@@ -264,9 +293,7 @@ The calendar agent generates A2UI JSON for rich UI components:
 }
 ```
 
-**Current Behavior**: A2UI JSON is displayed as text in the ADK web UI.
-
-**Future Enhancement**: With A2A protocol integration (Milestone 3), this JSON will render as interactive UI components.
+**Current Status**: A2UI renders as interactive UI via A2A protocol (Milestone 3 complete).
 
 ## Best Practices
 
@@ -321,19 +348,22 @@ Test each agent separately before orchestration:
 2. Test `calendar_agent` alone
 3. Test `orchestrator_agent` with both
 
+## Completed Milestones
+
+### Milestone 3: A2A Protocol Integration ✅
+- Full A2UI rendering with interactive components
+- A2A server for orchestrator agent
+- Custom executor for A2UI parsing and user action handling
+- Form value binding and estimate card generation
+
 ## Future Enhancements
 
-### Milestone 3: A2A Protocol Integration
-- Full A2UI rendering with interactive components
-- Agent-to-Agent communication protocol
-- Event handling for UI interactions
-
-### Additional Features
 - Error recovery and retry logic
 - User authentication and personalization
 - Multi-language support
 - Analytics and tracking
 - CRM integration
+- Calendar agent integration with A2A workflow
 
 ## Resources
 
@@ -341,9 +371,10 @@ Test each agent separately before orchestration:
 - **LLM Transfer Pattern**: Agent-driven routing with `transfer_to_agent()`
 - **State Management**: Shared context via `InvocationContext`
 - **A2UI Integration**: See `docs/A2UI_INTEGRATION.md`
+- **A2A Integration**: See `docs/A2A_INTEGRATION_STATUS.md`
 
 ---
 
-**Status**: Multi-agent orchestration complete and tested  
-**Last Updated**: January 10, 2026  
-**Version**: 1.0
+**Status**: Multi-agent orchestration complete with A2A/A2UI integration  
+**Last Updated**: January 11, 2026  
+**Version**: 1.1

@@ -20,26 +20,28 @@ This project implements a multi-agent system that coordinates vehicle informatio
 - **Location**: `calendar_agent/`
 - **Documentation**: See `docs/A2UI_INTEGRATION.md`
 
-### 2. Vehicle Intake Agent ✅ COMPLETE
-- **Status**: Fully functional
+### 2. Vehicle Intake Agent ✅ COMPLETE + A2UI ENABLED
+- **Status**: Fully functional with A2UI support
 - **Features**:
-  - Conversational vehicle information collection
-  - Collects: year, make, model, trim, mileage, color, condition
-  - Provides trade-in value estimates
-  - Stores data in shared state
+  - Interactive A2UI form for vehicle information collection
+  - Collects: year, make, model, mileage, condition via form
+  - Provides trade-in value estimates with A2UI card display
+  - Form data binding with path-based values
+  - Schedule Appraisal button for next step
 - **Location**: `vehicle_intake_agent/`
-- **Documentation**: See `docs/MULTI_AGENT_ORCHESTRATION.md`
+- **Documentation**: See `docs/A2UI_INTEGRATION.md`
 
-### 3. Orchestrator Agent ✅ COMPLETE
-- **Status**: Fully functional
+### 3. Orchestrator Agent ✅ COMPLETE + A2A SERVER
+- **Status**: Fully functional with A2A protocol support
 - **Features**:
+  - A2A server running at `http://localhost:10010`
+  - Custom executor for A2UI message parsing
+  - Handles A2UI user actions (button clicks, form submissions)
   - Coordinates complete vehicle trade-in workflow
   - LLM Transfer pattern for dynamic routing
   - Delegates to vehicle intake and calendar agents
-  - Maintains context throughout conversation
-  - Smooth agent handoffs
 - **Location**: `orchestrator_agent/`
-- **Documentation**: See `docs/MULTI_AGENT_ORCHESTRATION.md`
+- **Documentation**: See `docs/A2UI_INTEGRATION.md`
 
 ## Setup
 
@@ -123,13 +125,15 @@ AdventofAgents/
 - [x] End-to-end workflow testing
 - [x] Document multi-agent orchestration
 
-### Milestone 3: A2A Protocol Integration 📋 PLANNED
-- [ ] Install A2A SDK dependencies
-- [ ] Create A2A server wrapper for calendar agent
-- [ ] Implement agent executor with UI event handling
-- [ ] Configure A2UI shell client connection
-- [ ] Test full interactive UI rendering
-- [ ] Document A2A integration
+### Milestone 3: A2A Protocol Integration ✅ CLOSED
+- [x] Install A2A SDK dependencies
+- [x] Create A2A server for orchestrator agent
+- [x] Implement custom agent executor with A2UI parsing
+- [x] Configure A2UI shell client connection
+- [x] Test full interactive UI rendering
+- [x] Fix form value binding (TextField text property)
+- [x] Complete vehicle trade-in workflow with estimate card
+- [x] Document A2A/A2UI integration
 
 ## Technical Details
 
@@ -140,12 +144,20 @@ AdventofAgents/
 - Datetime format: `YYYY-MM-DD HH:MM:SS`
 
 ### A2UI Integration
-- Agent generates declarative JSON UI descriptions
-- Three UI templates: time slot selection, booking form, confirmation
-- Data binding with path references (e.g., `/slots/0/date`)
+- Agents generate declarative JSON UI descriptions
+- Vehicle intake: form with Year/Make/Model/Mileage fields, estimate card
+- Calendar: time slot selection, booking form, confirmation
+- Data binding with path references (e.g., `/vehicle/year`)
 - Action handlers for button clicks and form submissions
 - Framework-agnostic format works across web, mobile, Flutter, React
 - See `docs/A2UI_INTEGRATION.md` for details
+
+### Running the A2UI Demo
+```bash
+cd A2UI/samples/client/lit
+npm run demo:vehicle
+```
+Open http://localhost:5173/?app=orchestrator (port may vary)
 
 ### Key Learnings
 1. Integration Connectors use simplified field names (capitalized)
