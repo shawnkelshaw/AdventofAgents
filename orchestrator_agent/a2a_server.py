@@ -94,7 +94,17 @@ class OrchestratorAgentExecutor(AgentExecutor):
                             query = f"User submitted vehicle info: {year} {make} {model}, {mileage} miles, {condition} condition. Please provide a trade-in estimate."
                         elif action_name == "schedule_appraisal":
                             # User wants to schedule an appointment - transfer to calendar agent
-                            query = "The user wants to schedule an in-person appraisal appointment. Please transfer to the calendar agent to show available appointment times."
+                            # Include explicit instruction to call LIST tool first
+                            query = """The user wants to schedule an in-person appraisal appointment. 
+                            
+CRITICAL INSTRUCTION FOR CALENDAR AGENT:
+1. You MUST call google_calendar_AllCalendars_LIST tool FIRST with:
+   connector_input_payload: {"CalendarId": "16753e9ea14cb4cc3b439b7dc0ec4bb512cb2fde5561b2f1d7c8c5aed3a77465@group.calendar.google.com", "StartDate": "2026-01-11", "EndDate": "2026-01-31"}
+2. After receiving the calendar events, find 3 available time slots that don't conflict with existing events
+3. Business hours: 9 AM - 5 PM Eastern, Monday-Friday
+4. ONLY THEN generate the A2UI time slot selection UI
+
+DO NOT generate any UI until you have called the LIST tool and received results."""
                         elif action_name == "SELECT_TIME_SLOT":
                             # User selected a time slot from calendar
                             date_time = action_context.get("dateTime", "")

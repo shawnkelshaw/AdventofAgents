@@ -83,12 +83,23 @@ npm install
 
 ### Running the Demo
 
-Start the full demo (A2UI client + orchestrator server):
+**Option 1: React + shadcn Client (Recommended)**
+```bash
+# Terminal 1: Start the A2A server
+cd orchestrator_agent
+uv run python server.py
+
+# Terminal 2: Start the React client
+cd react-client
+npm run dev
+```
+Access the UI at: http://localhost:5173
+
+**Option 2: Lit-based A2UI Client**
 ```bash
 cd A2UI/samples/client/lit
 npm run demo:vehicle
 ```
-
 Access the UI at: http://localhost:5173/?app=orchestrator (port may vary)
 
 ## Project Structure
@@ -109,6 +120,9 @@ AdventofAgents/
 │   ├── a2a_server.py         # A2A protocol server
 │   ├── server.py             # Main server entry point
 │   └── .env                  # GEMINI_API_KEY
+├── react-client/             # React + shadcn/ui A2UI client (recommended)
+│   ├── src/components/       # React components
+│   └── src/components/a2ui/  # A2UI renderer
 ├── A2UI/                     # A2UI client renderer (Lit-based)
 ├── docs/                     # Documentation
 └── README.md
@@ -149,6 +163,14 @@ AdventofAgents/
 - [x] Complete vehicle trade-in workflow with estimate card
 - [x] Document A2A/A2UI integration
 
+### Milestone 4: React + shadcn Client ✅ CLOSED
+- [x] Build React + shadcn/ui frontend
+- [x] Implement A2UI renderer with ID-based component references
+- [x] Connect to A2A server using @a2a-js/sdk
+- [x] Fix calendar agent to check availability before suggesting slots
+- [x] Test full end-to-end workflow with calendar integration
+- [x] Verify email invitations sent to customers
+
 ## Technical Details
 
 ### Calendar Agent Implementation
@@ -166,12 +188,17 @@ AdventofAgents/
 - Framework-agnostic format works across web, mobile, Flutter, React
 - See `docs/A2UI_INTEGRATION.md` for details
 
-### Running the A2UI Demo
+### Running the React + shadcn Demo
 ```bash
-cd A2UI/samples/client/lit
-npm run demo:vehicle
+# Terminal 1: Start the A2A server
+cd orchestrator_agent
+uv run python server.py
+
+# Terminal 2: Start the React client  
+cd react-client
+npm run dev
 ```
-Open http://localhost:5173/?app=orchestrator (port may vary)
+Open http://localhost:5173
 
 ### Key Learnings
 1. Integration Connectors use simplified field names (capitalized)

@@ -389,6 +389,40 @@ This starts both:
 
 ---
 
+## Milestone 4: React + shadcn Client ✅
+
+### Implementation
+
+A new React + shadcn/ui client has been built as an alternative to the Lit-based A2UI shell client.
+
+#### Files
+- **`react-client/`**: Complete React application
+- **`react-client/src/components/a2ui/A2UIRenderer.tsx`**: A2UI JSON renderer
+- **`react-client/src/components/ChatInterface.tsx`**: Main chat UI
+
+#### Features
+- Built with React 18, TypeScript, Vite, Tailwind CSS, and shadcn/ui
+- Connects to A2A server using `@a2a-js/sdk`
+- Renders A2UI JSON with ID-based component references
+- Supports: Card, Button, TextField, Text, Row, Column components
+- Handles `child` (single ID) and `children.explicitList` (array of IDs) references
+- Data binding with path-based values
+
+#### Running the React Client
+```bash
+# Terminal 1: Start the A2A server
+cd orchestrator_agent
+uv run python server.py
+
+# Terminal 2: Start the React client
+cd react-client
+npm run dev
+```
+
+Open http://localhost:5173
+
+---
+
 **Status**: A2A/A2UI integration complete and fully functional  
 **Last Updated**: January 11, 2026  
 **Version**: 0.8 (Public Preview)
