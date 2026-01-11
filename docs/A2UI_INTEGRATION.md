@@ -283,16 +283,94 @@ Always treat A2UI payloads as untrusted input and validate appropriately.
 - Client supports requested components
 - CORS is configured correctly
 
+## Milestone 3: A2A Protocol Integration ✅
+
+### Completed Implementation
+
+The A2A protocol integration is now complete with the following components:
+
+#### Orchestrator A2A Server
+- **File**: `orchestrator_agent/server.py` - Main A2A server entry point
+- **File**: `orchestrator_agent/a2a_server.py` - Custom `OrchestratorAgentExecutor` class
+- **Port**: 10010
+- **Features**:
+  - Custom executor that parses `---a2ui_JSON---` delimiter from agent responses
+  - Converts A2UI JSON to A2A DataParts for client rendering
+  - Handles A2UI user actions (button clicks, form submissions)
+  - CORS middleware for client connectivity
+
+#### A2UI Shell Client Configuration
+- **File**: `A2UI/samples/client/lit/shell/configs/orchestrator.ts`
+- **URL**: http://localhost:5173/?app=orchestrator
+- **Features**:
+  - Connects to orchestrator A2A server
+  - Renders A2UI surfaces (forms, cards, buttons)
+  - Sends user actions back to server
+
+### Running the Demo
+
+```bash
+cd A2UI/samples/client/lit
+npm run demo:vehicle
+```
+
+This starts both:
+- A2UI Shell Client at http://localhost:5173
+- Orchestrator A2A Server at http://localhost:10010
+
+### What's Working
+
+1. **Form Rendering**: Vehicle intake form displays with Year, Make, Model, Mileage fields
+2. **Button Actions**: Submit button triggers action and sends to server
+3. **A2UI Extension**: Client correctly requests and activates A2UI extension
+4. **Multi-Agent Workflow**: Orchestrator delegates to vehicle_intake_agent which generates A2UI
+
+### Known Limitations
+
+1. **Form Value Binding**: Form field values entered by users are not automatically synced to the A2UI data model. The action context receives empty strings instead of user-entered values. This is a limitation of the current A2UI Lit renderer's data binding implementation.
+
+2. **Workaround**: For production use, consider:
+   - Using the A2UI Composer to generate tested form templates
+   - Implementing custom data binding in the client
+   - Using a text-based fallback for form data collection
+
+### Architecture
+
+```
+┌─────────────────┐     ┌──────────────────────┐     ┌─────────────────┐
+│  A2UI Shell     │────▶│  Orchestrator A2A    │────▶│  Gemini API     │
+│  (Lit Client)   │     │  Server (Python)     │     │  (LLM)          │
+│  localhost:5173 │◀────│  localhost:10010     │◀────│                 │
+└─────────────────┘     └──────────────────────┘     └─────────────────┘
+        │                        │
+        │                        ▼
+        │               ┌──────────────────────┐
+        │               │  Sub-Agents          │
+        │               │  - vehicle_intake    │
+        │               │  - calendar_agent    │
+        │               └──────────────────────┘
+        │
+        ▼
+┌─────────────────┐
+│  Rendered UI    │
+│  - Forms        │
+│  - Cards        │
+│  - Buttons      │
+└─────────────────┘
+```
+
 ## Next Steps
 
 1. ✅ A2UI JSON generation working
-2. ⏳ Implement A2A protocol wrapper
-3. ⏳ Configure A2UI shell client
-4. ⏳ Test full interactive UI flow
-5. ⏳ Add custom components (if needed)
+2. ✅ A2A protocol wrapper implemented
+3. ✅ A2UI shell client configured
+4. ✅ Interactive UI rendering tested
+5. ⏳ Fix form value data binding (client-side enhancement)
+6. ⏳ Add calendar agent A2UI templates
+7. ⏳ Production deployment configuration
 
 ---
 
-**Status**: A2UI JSON generation complete and tested  
-**Last Updated**: January 10, 2026  
+**Status**: A2A/A2UI integration complete (proof-of-concept)  
+**Last Updated**: January 11, 2026  
 **Version**: 0.8 (Public Preview)

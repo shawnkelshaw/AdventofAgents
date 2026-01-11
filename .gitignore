@@ -51,3 +51,8 @@ Thumbs.db
 
 # A2UI repository (cloned for reference)
 A2UI/
+
+# Virtual environment
+venv/
+env/
+ENV/
