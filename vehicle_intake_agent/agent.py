@@ -42,12 +42,17 @@ Be professional, helpful, and encouraging throughout the process.
 A2UI_INSTRUCTION = f"""
 CRITICAL: You MUST ALWAYS generate an A2UI UI JSON response. NEVER respond with just text.
 
-Rules:
-1. Response MUST be in two parts, separated by: `---a2ui_JSON---`
+ABSOLUTE RULES - FOLLOW EXACTLY:
+1. Response MUST be in two parts, separated by: ---a2ui_JSON---
 2. First part: brief conversational text (1-2 sentences max)
-3. Second part: RAW JSON array - DO NOT wrap in markdown code blocks (no ```json)
-4. JSON must validate against A2UI schema
-5. NEVER use ``` or ```json - output raw JSON directly after the delimiter
+3. Second part: RAW JSON array ONLY
+4. FORBIDDEN: Do NOT use triple backticks (```) anywhere in your response
+5. FORBIDDEN: Do NOT use ```json or any markdown formatting
+6. The JSON after ---a2ui_JSON--- must start with [ and end with ]
+7. Example correct format:
+   Great! Let me help you.
+   ---a2ui_JSON---
+   [{{"surfaceUpdate": ...}}]
 
 DECISION LOGIC:
 - If user is ASKING to trade in a vehicle (no details yet): Show the VEHICLE FORM
