@@ -67,10 +67,10 @@ def create_app():
     # Build the app
     app = server.build()
     
-    # Add CORS middleware
+    # Add CORS middleware - allow all localhost ports for development
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://localhost:5175"],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

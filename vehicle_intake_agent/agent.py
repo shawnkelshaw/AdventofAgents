@@ -61,10 +61,10 @@ When collecting vehicle information, use this EXACT structure:
       "surfaceId": "vehicle_form",
       "components": [
         {{"id": "form_container", "component": {{"Column": {{"children": {{"explicitList": ["year_field", "make_field", "model_field", "mileage_field", "condition_field", "submit_btn"]}}, "distribution": "start", "alignment": "stretch"}}}}}},
-        {{"id": "year_field", "component": {{"TextField": {{"label": {{"literalString": "Year"}}, "value": {{"path": "/vehicle/year"}}, "textFieldType": "number"}}}}}},
-        {{"id": "make_field", "component": {{"TextField": {{"label": {{"literalString": "Make"}}, "value": {{"path": "/vehicle/make"}}}}}}}},
-        {{"id": "model_field", "component": {{"TextField": {{"label": {{"literalString": "Model"}}, "value": {{"path": "/vehicle/model"}}}}}}}},
-        {{"id": "mileage_field", "component": {{"TextField": {{"label": {{"literalString": "Mileage"}}, "value": {{"path": "/vehicle/mileage"}}, "textFieldType": "number"}}}}}},
+        {{"id": "year_field", "component": {{"TextField": {{"label": {{"literalString": "Year"}}, "text": {{"path": "/vehicle/year"}}, "type": "number"}}}}}},
+        {{"id": "make_field", "component": {{"TextField": {{"label": {{"literalString": "Make"}}, "text": {{"path": "/vehicle/make"}}}}}}}},
+        {{"id": "model_field", "component": {{"TextField": {{"label": {{"literalString": "Model"}}, "text": {{"path": "/vehicle/model"}}}}}}}},
+        {{"id": "mileage_field", "component": {{"TextField": {{"label": {{"literalString": "Mileage"}}, "text": {{"path": "/vehicle/mileage"}}, "type": "number"}}}}}},
         {{"id": "condition_field", "component": {{"Dropdown": {{"label": {{"literalString": "Condition"}}, "value": {{"path": "/vehicle/condition"}}, "options": [{{"value": "excellent", "label": {{"literalString": "Excellent"}}}}, {{"value": "good", "label": {{"literalString": "Good"}}}}, {{"value": "fair", "label": {{"literalString": "Fair"}}}}, {{"value": "poor", "label": {{"literalString": "Poor"}}}}]}}}}}},
         {{"id": "submit_btn", "component": {{"Button": {{"child": "submit_text", "primary": true, "action": {{"name": "submit_vehicle_info", "context": [{{"key": "year", "value": {{"path": "/vehicle/year"}}}}, {{"key": "make", "value": {{"path": "/vehicle/make"}}}}, {{"key": "model", "value": {{"path": "/vehicle/model"}}}}, {{"key": "mileage", "value": {{"path": "/vehicle/mileage"}}}}, {{"key": "condition", "value": {{"path": "/vehicle/condition"}}}}]}}}}}}}},
         {{"id": "submit_text", "component": {{"Text": {{"text": {{"literalString": "Submit Vehicle Info"}}}}}}}}
@@ -91,10 +91,46 @@ When collecting vehicle information, use this EXACT structure:
 You MUST include ALL fields in the form: Year, Make, Model, Mileage, Condition dropdown, and Submit button.
 The button action MUST include context with paths to all form field values.
 
-When showing the estimate, generate a card UI with:
-- Vehicle summary
-- Estimated value range
-- Next steps message
+When the user has SUBMITTED vehicle information (year, make, model, mileage provided), DO NOT show the form again.
+Instead, generate an ESTIMATE CARD with this structure:
+```json
+[
+  {{
+    "surfaceUpdate": {{
+      "surfaceId": "estimate_card",
+      "components": [
+        {{"id": "card_container", "component": {{"Card": {{"child": "card_content"}}}}}},
+        {{"id": "card_content", "component": {{"Column": {{"children": {{"explicitList": ["title", "vehicle_summary", "estimate_range", "next_steps", "schedule_btn"]}}, "distribution": "start", "alignment": "stretch"}}}}}},
+        {{"id": "title", "component": {{"Text": {{"text": {{"literalString": "Trade-In Estimate"}}, "usageHint": "h2"}}}}}},
+        {{"id": "vehicle_summary", "component": {{"Text": {{"text": {{"path": "/estimate/vehicle_summary"}}}}}}}},
+        {{"id": "estimate_range", "component": {{"Text": {{"text": {{"path": "/estimate/value_range"}}, "usageHint": "h3"}}}}}},
+        {{"id": "next_steps", "component": {{"Text": {{"text": {{"literalString": "Schedule an in-person appraisal to get a final offer."}}}}}}}},
+        {{"id": "schedule_btn", "component": {{"Button": {{"child": "schedule_text", "primary": true, "action": {{"name": "schedule_appraisal"}}}}}}}},
+        {{"id": "schedule_text", "component": {{"Text": {{"text": {{"literalString": "Schedule Appraisal"}}}}}}}}
+      ]
+    }}
+  }},
+  {{
+    "dataModelUpdate": {{
+      "surfaceId": "estimate_card",
+      "contents": [
+        {{"key": "estimate", "valueMap": [
+          {{"key": "vehicle_summary", "valueString": "[YEAR] [MAKE] [MODEL] - [MILEAGE] miles, [CONDITION] condition"}},
+          {{"key": "value_range", "valueString": "$X,XXX - $X,XXX"}}
+        ]}}
+      ]
+    }}
+  }},
+  {{
+    "beginRendering": {{
+      "surfaceId": "estimate_card",
+      "root": "card_container"
+    }}
+  }}
+]
+```
+Replace [YEAR], [MAKE], [MODEL], [MILEAGE], [CONDITION] with actual values.
+Calculate estimate based on: Excellent=$15k-20k, Good=$10k-15k, Fair=$5k-10k, Poor=$2k-5k (adjust for year/mileage)
 
 ---BEGIN A2UI JSON SCHEMA---
 {A2UI_SCHEMA}
