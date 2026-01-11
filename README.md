@@ -74,8 +74,9 @@ gcloud config set project your-project-id
 gcloud auth application-default set-quota-project your-project-id
 ```
 
-4. Install A2UI client dependencies:
+4. Clone and install A2UI client:
 ```bash
+git clone https://github.com/google/A2UI.git
 cd A2UI/samples/client/lit
 npm install
 ```
