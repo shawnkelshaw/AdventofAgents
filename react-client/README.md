@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# Vehicle Trade-In React Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript + shadcn/ui frontend for the Vehicle Trade-In Multi-Agent System.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This client provides a modern, interactive UI for the vehicle trade-in workflow, connecting to the Orchestrator A2A server and rendering A2UI components.
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **A2UI Rendering**: Converts A2UI JSON to React/shadcn components
+- **A2A Integration**: Uses `@a2a-js/sdk` for server communication
+- **Interactive Forms**: Vehicle info collection, booking forms
+- **Dynamic UI**: Time slot selection, estimate cards, confirmation screens
+- **Responsive Design**: Works on desktop and mobile
 
-## Expanding the ESLint configuration
+## Quick Start
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open http://localhost:5176
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Note:** Ensure the Orchestrator A2A server is running at http://localhost:10010:
+```bash
+cd ../orchestrator_agent
+uv run python server.py
 ```
+
+## Project Structure
+
+```
+react-client/
+├── src/
+│   ├── components/
+│   │   ├── a2ui/
+│   │   │   └── A2UIRenderer.tsx   # A2UI JSON renderer
+│   │   ├── ui/                     # shadcn/ui components
+│   │   └── ChatInterface.tsx       # Main chat UI
+│   ├── App.tsx                     # App entry point
+│   └── main.tsx                    # React entry point
+├── package.json
+└── vite.config.ts
+```
+
+## A2UI Components Supported
+
+- **Card**: Styled content container
+- **Row/Column**: Flex layout components
+- **Text**: Headings and body text
+- **TextField**: Form input with data binding
+- **Button**: Interactive buttons with action handlers
+
+## Technology Stack
+
+- React 18
+- TypeScript
+- Vite (dev server & build)
+- Tailwind CSS
+- shadcn/ui components
+- @a2a-js/sdk (A2A protocol)
+
+## Development
+
+```bash
+# Run development server with hot reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## License
+
+MIT

@@ -21,7 +21,7 @@ All A2A/A2UI integration work has been completed successfully.
   - Environment variables properly loaded with `python-dotenv`
 
 ### 3. A2UI Shell Client
-- **Vehicle Trade-In Demo**: Working at `http://localhost:5173/?app=orchestrator`
+- **Vehicle Trade-In Demo**: Working at `http://localhost:5176/?app=orchestrator`
   - Custom configuration in `configs/orchestrator.ts`
   - Connects to orchestrator A2A server
   - Renders A2UI surfaces (forms, cards, buttons)
@@ -101,10 +101,10 @@ cd A2UI/samples/client/lit
 npm run demo:vehicle
 ```
 This starts both:
-- A2UI Shell Client at http://localhost:5173 (port may vary)
+- A2UI Shell Client at http://localhost:5176 (port may vary)
 - Orchestrator A2A Server at http://localhost:10010
 
-Open: http://localhost:5173/?app=orchestrator
+Open: http://localhost:5176/?app=orchestrator
 
 ### Manual Startup
 
@@ -119,12 +119,12 @@ uv run python server.py
 ```bash
 cd A2UI/samples/client/lit/shell
 npm run dev
-# Running at http://localhost:5173
+# Running at http://localhost:5176
 ```
 
 ## Workflow Demo
 
-1. Open http://localhost:5173/?app=orchestrator
+1. Open http://localhost:5176/?app=orchestrator
 2. Click "Send" with default message "I'd like to trade in my vehicle"
 3. Fill in the form: Year (2020), Make (Toyota), Model (Camry), Mileage (45000)
 4. Click "SUBMIT VEHICLE INFO"
@@ -159,5 +159,5 @@ npm run dev
 
 ---
 
-**Last Updated**: January 11, 2026  
+**Last Updated**: January 12, 2026  
 **Status**: ✅ Milestone 3 Complete - A2A/A2UI integration fully functional

@@ -93,14 +93,14 @@ uv run python server.py
 cd react-client
 npm run dev
 ```
-Access the UI at: http://localhost:5173
+Access the UI at: http://localhost:5176
 
 **Option 2: Lit-based A2UI Client**
 ```bash
 cd A2UI/samples/client/lit
 npm run demo:vehicle
 ```
-Access the UI at: http://localhost:5173/?app=orchestrator (port may vary)
+Access the UI at: http://localhost:5176/?app=orchestrator (port may vary)
 
 ## Project Structure
 
@@ -170,6 +170,14 @@ AdventofAgents/
 - [x] Fix calendar agent to check availability before suggesting slots
 - [x] Test full end-to-end workflow with calendar integration
 - [x] Verify email invitations sent to customers
+
+### Milestone 5: Calendar Agent Improvements ✅ CLOSED
+- [x] Dynamic date calculation (no hardcoded dates)
+- [x] UTC to Eastern timezone conversion for calendar events
+- [x] Near/Mid/Far slot distribution algorithm (days 1-2/3-5/6-7)
+- [x] One slot per day maximum
+- [x] Output cleanup (strip JSON/reasoning from user display)
+- [x] Full end-to-end booking verification
 
 ## Technical Details
 

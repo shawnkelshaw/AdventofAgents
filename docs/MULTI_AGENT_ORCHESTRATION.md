@@ -361,7 +361,10 @@ Test each agent separately before orchestration:
 - ✅ Calendar agent integration with A2A workflow
 - ✅ Full end-to-end booking flow with Google Calendar
 - ✅ Email invitations sent to customers
-- ✅ Timezone handling (Eastern → UTC)
+- ✅ Timezone handling (UTC → Eastern conversion)
+- ✅ Dynamic date calculation (no hardcoded dates)
+- ✅ Near/Mid/Far slot distribution algorithm
+- ✅ Output cleanup (strip JSON from user display)
 
 ## Future Enhancements
 
@@ -383,5 +386,5 @@ Test each agent separately before orchestration:
 ---
 
 **Status**: Multi-agent orchestration complete with A2A/A2UI integration  
-**Last Updated**: January 11, 2026  
-**Version**: 1.1
+**Last Updated**: January 12, 2026  
+**Version**: 1.2

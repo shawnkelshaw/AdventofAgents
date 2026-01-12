@@ -297,7 +297,7 @@ The A2A protocol integration is now complete with the following components:
 
 #### A2UI Shell Client Configuration
 - **File**: `A2UI/samples/client/lit/shell/configs/orchestrator.ts`
-- **URL**: http://localhost:5173/?app=orchestrator
+- **URL**: http://localhost:5176/?app=orchestrator
 - **Features**:
   - Connects to orchestrator A2A server
   - Renders A2UI surfaces (forms, cards, buttons)
@@ -311,7 +311,7 @@ npm run demo:vehicle
 ```
 
 This starts both:
-- A2UI Shell Client at http://localhost:5173
+- A2UI Shell Client at http://localhost:5176
 - Orchestrator A2A Server at http://localhost:10010
 
 ### What's Working
@@ -346,7 +346,7 @@ This starts both:
 ┌─────────────────┐     ┌──────────────────────┐     ┌─────────────────┐
 │  A2UI Shell     │────▶│  Orchestrator A2A    │────▶│  Gemini API     │
 │  (Lit Client)   │     │  Server (Python)     │     │  (LLM)          │
-│  localhost:5173 │◀────│  localhost:10010     │◀────│                 │
+│  localhost:5176 │◀────│  localhost:10010     │◀────│                 │
 └─────────────────┘     └──────────────────────┘     └─────────────────┘
         │                        │
         │                        ▼
@@ -377,6 +377,9 @@ This starts both:
 8. ✅ Google Calendar integration (list available slots, create events)
 9. ✅ Email invitations sent to customers
 10. ✅ Timezone handling (Eastern → UTC conversion)
+11. ✅ Dynamic date calculation (no hardcoded dates)
+12. ✅ Near/Mid/Far slot distribution algorithm
+13. ✅ Output cleanup (strip JSON from user display)
 
 ## Known Issues & Solutions
 
@@ -419,10 +422,10 @@ cd react-client
 npm run dev
 ```
 
-Open http://localhost:5173
+Open http://localhost:5176
 
 ---
 
 **Status**: A2A/A2UI integration complete and fully functional  
-**Last Updated**: January 11, 2026  
+**Last Updated**: January 12, 2026  
 **Version**: 0.8 (Public Preview)

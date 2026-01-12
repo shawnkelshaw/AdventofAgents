@@ -34,6 +34,39 @@ def create_a2ui_part(data):
     return Part(root=DataPart(
         data=data
     ))
+
+import re
+
+def clean_text_response(text):
+    """Strip JSON, markdown code blocks, and internal reasoning from text responses.
+    
+    This ensures users only see friendly messages, not raw JSON or debug output.
+    """
+    cleaned = text.strip()
+    
+    # Remove markdown code blocks
+    cleaned = re.sub(r'```[\s\S]*?```', '', cleaned)
+    
+    # Remove standalone JSON arrays [ ... ]
+    cleaned = re.sub(r'\[\s*\{[\s\S]*?\}\s*\]', '', cleaned)
+    
+    # Remove standalone JSON objects { ... }
+    cleaned = re.sub(r'\{[^{}]*\}', '', cleaned)
+    
+    # Remove BUSY TIMES, AVAILABILITY CHECK sections
+    cleaned = re.sub(r'BUSY TIMES FROM CALENDAR[\s\S]*?(?=\n[A-Z]|\Z)', '', cleaned)
+    cleaned = re.sub(r'AVAILABILITY CHECK[\s\S]*?(?=\n[A-Z]|\Z)', '', cleaned)
+    cleaned = re.sub(r'ANALYZE AVAILABILITY[\s\S]*?(?=\n[A-Z]|\Z)', '', cleaned)
+    cleaned = re.sub(r'Selected slots:.*', '', cleaned)
+    
+    # Clean up extra whitespace
+    cleaned = re.sub(r'\n\s*\n+', '\n', cleaned).strip()
+    
+    # Filter to keep only user-friendly lines (not starting with -, Day, etc)
+    lines = [l.strip() for l in cleaned.split('\n') if l.strip() and not l.strip().startswith('-') and not l.strip().startswith('Day ')]
+    
+    # Return the last non-empty line (the friendly message)
+    return lines[-1] if lines else ""
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
 from google.genai import types as genai_types
@@ -185,8 +218,11 @@ DO NOT generate any UI until you have called the LIST tool and received results.
             logger.info("Splitting response into text and UI parts")
             text_content, json_string = full_response.split("---a2ui_JSON---", 1)
             
-            if text_content.strip():
-                final_parts.append(Part(root=TextPart(text=text_content.strip())))
+            # Clean text_content using the helper function
+            cleaned_text = clean_text_response(text_content)
+            
+            if cleaned_text:
+                final_parts.append(Part(root=TextPart(text=cleaned_text)))
             
             if json_string.strip():
                 try:
@@ -213,7 +249,10 @@ DO NOT generate any UI until you have called the LIST tool and received results.
                     logger.error(f"Failed to parse A2UI JSON: {e}")
                     final_parts.append(Part(root=TextPart(text=json_string)))
         else:
-            final_parts.append(Part(root=TextPart(text=full_response.strip())))
+            # Also clean responses that don't have a delimiter
+            cleaned_response = clean_text_response(full_response)
+            if cleaned_response:
+                final_parts.append(Part(root=TextPart(text=cleaned_response)))
         
         logger.info(f"Sending {len(final_parts)} parts to client")
         for i, p in enumerate(final_parts):
