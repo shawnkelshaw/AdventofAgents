@@ -13,7 +13,7 @@ from calendar_agent.agent import root_agent as calendar_agent
 # Define the orchestrator agent
 root_agent = LlmAgent(
     name="orchestrator_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Coordinates the vehicle trade-in workflow across specialized agents",
     instruction="""
 You are the orchestrator for vehicle trade-in and appointment scheduling.

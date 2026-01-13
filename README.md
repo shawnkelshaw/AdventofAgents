@@ -179,6 +179,11 @@ AdventofAgents/
 - [x] Output cleanup (strip JSON/reasoning from user display)
 - [x] Full end-to-end booking verification
 
+### Milestone 6: UX Improvements ✅ CLOSED
+- [x] Form prepopulation from user intent (extract year/make/model/mileage)
+- [x] Dynamic calendar slot rendering (only render slots with valid data)
+- [x] Model update from gemini-2.0-flash-exp to gemini-2.0-flash (better rate limits)
+
 ## Technical Details
 
 ### Calendar Agent Implementation

@@ -380,6 +380,9 @@ This starts both:
 11. ✅ Dynamic date calculation (no hardcoded dates)
 12. ✅ Near/Mid/Far slot distribution algorithm
 13. ✅ Output cleanup (strip JSON from user display)
+14. ✅ Form prepopulation from user intent (extract vehicle info)
+15. ✅ Dynamic calendar slot rendering (2-slot or 3-slot templates)
+16. ✅ Model update to gemini-2.0-flash (better rate limits)
 
 ## Known Issues & Solutions
 

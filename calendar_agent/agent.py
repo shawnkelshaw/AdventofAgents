@@ -160,8 +160,32 @@ Be professional, clear, and helpful.
 # A2UI UI template examples - COMPACT FORMAT with flat data model
 CALENDAR_UI_EXAMPLES = """
 --- TIME SLOT SELECTION ---
-Generate EXACTLY this JSON array (replace dates with actual available times):
+CRITICAL: Only include slots that have actual availability! Do NOT include empty slots.
 
+If you found 2 slots, use this structure (children has ["title", "s1", "s2"], NOT s3):
+[
+  {"surfaceUpdate": {"surfaceId": "calendar", "components": [
+    {"id": "root", "component": {"Column": {"children": {"explicitList": ["title", "s1", "s2"]}}}},
+    {"id": "title", "component": {"Text": {"text": {"literalString": "Available Appointment Times"}, "usageHint": "h2"}}},
+    {"id": "s1", "component": {"Card": {"child": "r1"}}},
+    {"id": "r1", "component": {"Row": {"children": {"explicitList": ["t1", "b1"]}, "distribution": "spaceBetween"}}},
+    {"id": "t1", "component": {"Text": {"text": {"path": "/slot1/display"}}}},
+    {"id": "b1", "component": {"Button": {"child": "bt1", "action": {"name": "SELECT_TIME_SLOT", "context": [{"key": "dateTime", "value": {"path": "/slot1/dateTime"}}]}}}},
+    {"id": "bt1", "component": {"Text": {"text": {"literalString": "Select"}}}},
+    {"id": "s2", "component": {"Card": {"child": "r2"}}},
+    {"id": "r2", "component": {"Row": {"children": {"explicitList": ["t2", "b2"]}, "distribution": "spaceBetween"}}},
+    {"id": "t2", "component": {"Text": {"text": {"path": "/slot2/display"}}}},
+    {"id": "b2", "component": {"Button": {"child": "bt2", "action": {"name": "SELECT_TIME_SLOT", "context": [{"key": "dateTime", "value": {"path": "/slot2/dateTime"}}]}}}},
+    {"id": "bt2", "component": {"Text": {"text": {"literalString": "Select"}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "calendar", "contents": [
+    {"key": "slot1", "valueMap": [{"key": "display", "valueString": "[SLOT1_DISPLAY]"}, {"key": "dateTime", "valueString": "[SLOT1_DATETIME]"}]},
+    {"key": "slot2", "valueMap": [{"key": "display", "valueString": "[SLOT2_DISPLAY]"}, {"key": "dateTime", "valueString": "[SLOT2_DATETIME]"}]}
+  ]}},
+  {"beginRendering": {"surfaceId": "calendar", "root": "root"}}
+]
+
+If you found 3 slots, use this structure (children has ["title", "s1", "s2", "s3"]):
 [
   {"surfaceUpdate": {"surfaceId": "calendar", "components": [
     {"id": "root", "component": {"Column": {"children": {"explicitList": ["title", "s1", "s2", "s3"]}}}},
@@ -183,14 +207,19 @@ Generate EXACTLY this JSON array (replace dates with actual available times):
     {"id": "bt3", "component": {"Text": {"text": {"literalString": "Select"}}}}
   ]}},
   {"dataModelUpdate": {"surfaceId": "calendar", "contents": [
-    {"key": "slot1", "valueMap": [{"key": "display", "valueString": "Mon Jan 13 at 10:00 AM"}, {"key": "dateTime", "valueString": "2026-01-13T10:00:00"}]},
-    {"key": "slot2", "valueMap": [{"key": "display", "valueString": "Thu Jan 16 at 2:00 PM"}, {"key": "dateTime", "valueString": "2026-01-16T14:00:00"}]},
-    {"key": "slot3", "valueMap": [{"key": "display", "valueString": "Tue Jan 21 at 11:00 AM"}, {"key": "dateTime", "valueString": "2026-01-21T11:00:00"}]}
+    {"key": "slot1", "valueMap": [{"key": "display", "valueString": "[SLOT1_DISPLAY]"}, {"key": "dateTime", "valueString": "[SLOT1_DATETIME]"}]},
+    {"key": "slot2", "valueMap": [{"key": "display", "valueString": "[SLOT2_DISPLAY]"}, {"key": "dateTime", "valueString": "[SLOT2_DATETIME]"}]},
+    {"key": "slot3", "valueMap": [{"key": "display", "valueString": "[SLOT3_DISPLAY]"}, {"key": "dateTime", "valueString": "[SLOT3_DATETIME]"}]}
   ]}},
   {"beginRendering": {"surfaceId": "calendar", "root": "root"}}
 ]
 
-Replace the display and dateTime values with actual available times from the calendar.
+CRITICAL RULES FOR SLOTS:
+- If you only found 2 slots, use the 2-slot template (s1, s2 only)
+- If you found 3 slots, use the 3-slot template (s1, s2, s3)
+- NEVER include a slot in the UI if it doesn't have a valid date/time
+- Replace [SLOT1_DISPLAY], [SLOT1_DATETIME] etc. with actual values like "Tue Jan 13 at 9:00 AM"
+
 
 --- BOOKING FORM ---
 After user selects a time slot, generate this compact form:
@@ -271,7 +300,7 @@ Here are the available appointment times.
 # Define the A2UI-enabled calendar agent
 root_agent = LlmAgent(
     name="calendar_agent_a2ui",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Calendar agent with A2UI support for rich interactive interfaces",
     instruction=A2UI_AND_AGENT_INSTRUCTION,
     tools=[calendar_connector],

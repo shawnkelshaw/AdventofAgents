@@ -55,30 +55,45 @@ ABSOLUTE RULES - FOLLOW EXACTLY:
    [{{"surfaceUpdate": ...}}]
 
 DECISION LOGIC:
-- If user is ASKING to trade in a vehicle (no details yet): Show the VEHICLE FORM
-- If user has SUBMITTED vehicle info (year, make, model, mileage provided): Show the ESTIMATE CARD
+- If user mentions a vehicle (e.g., "trade in my 2018 Toyota Camry"), EXTRACT any vehicle info they provided:
+  * Look for a YEAR (4-digit number like 2018, 2020, 2023)
+  * Look for a MAKE (Toyota, Honda, Ford, Chevrolet, etc.)
+  * Look for a MODEL (Camry, Accord, F-150, Civic, etc.)
+  * Look for MILEAGE if mentioned
+- PREPOPULATE the form with extracted values - DO NOT leave fields empty if the user provided them!
+- Show the VEHICLE FORM with extracted values filled in
+- If user has SUBMITTED vehicle info (via form submission): Show the ESTIMATE CARD
 - NEVER respond with just text - ALWAYS include A2UI JSON
+
+EXTRACTION EXAMPLES:
+- "I want to trade in my 2018 Toyota Camry" → year="2018", make="Toyota", model="Camry"
+- "Trade in 2020 Honda Accord with 45000 miles" → year="2020", make="Honda", model="Accord", mileage="45000"
+- "I have a Ford F-150" → make="Ford", model="F-150" (no year extracted)
 
 IMPORTANT: Your A2UI JSON array MUST contain these messages in order:
 1. A "surfaceUpdate" message defining ALL components
-2. A "dataModelUpdate" message with initial data
+2. A "dataModelUpdate" message with PREPOPULATED data (use extracted values, empty string if not found)
 3. A "beginRendering" message to signal the client to render
 
 --- VEHICLE FORM TEMPLATE ---
+Use this template but REPLACE the valueString values with extracted info:
 [
   {{"surfaceUpdate": {{"surfaceId": "vehicle_form", "components": [
-    {{"id": "form_container", "component": {{"Column": {{"children": {{"explicitList": ["year_field", "make_field", "model_field", "mileage_field", "condition_field", "submit_btn"]}}}}}}}},
+    {{"id": "form_container", "component": {{"Column": {{"children": {{"explicitList": ["year_field", "make_field", "model_field", "mileage_field", "submit_btn"]}}}}}}}},
     {{"id": "year_field", "component": {{"TextField": {{"label": {{"literalString": "Year"}}, "text": {{"path": "/vehicle/year"}}}}}}}},
     {{"id": "make_field", "component": {{"TextField": {{"label": {{"literalString": "Make"}}, "text": {{"path": "/vehicle/make"}}}}}}}},
     {{"id": "model_field", "component": {{"TextField": {{"label": {{"literalString": "Model"}}, "text": {{"path": "/vehicle/model"}}}}}}}},
     {{"id": "mileage_field", "component": {{"TextField": {{"label": {{"literalString": "Mileage"}}, "text": {{"path": "/vehicle/mileage"}}}}}}}},
-    {{"id": "condition_field", "component": {{"Dropdown": {{"label": {{"literalString": "Condition"}}, "value": {{"path": "/vehicle/condition"}}, "options": [{{"value": "excellent", "label": {{"literalString": "Excellent"}}}}, {{"value": "good", "label": {{"literalString": "Good"}}}}, {{"value": "fair", "label": {{"literalString": "Fair"}}}}, {{"value": "poor", "label": {{"literalString": "Poor"}}}}]}}}}}},
-    {{"id": "submit_btn", "component": {{"Button": {{"child": "submit_text", "primary": true, "action": {{"name": "submit_vehicle_info", "context": [{{"key": "year", "value": {{"path": "/vehicle/year"}}}}, {{"key": "make", "value": {{"path": "/vehicle/make"}}}}, {{"key": "model", "value": {{"path": "/vehicle/model"}}}}, {{"key": "mileage", "value": {{"path": "/vehicle/mileage"}}}}, {{"key": "condition", "value": {{"path": "/vehicle/condition"}}}}]}}}}}}}},
+    {{"id": "submit_btn", "component": {{"Button": {{"child": "submit_text", "primary": true, "action": {{"name": "submit_vehicle_info", "context": [{{"key": "year", "value": {{"path": "/vehicle/year"}}}}, {{"key": "make", "value": {{"path": "/vehicle/make"}}}}, {{"key": "model", "value": {{"path": "/vehicle/model"}}}}, {{"key": "mileage", "value": {{"path": "/vehicle/mileage"}}}}]}}}}}}}},
     {{"id": "submit_text", "component": {{"Text": {{"text": {{"literalString": "Submit Vehicle Info"}}}}}}}}
   ]}}}},
-  {{"dataModelUpdate": {{"surfaceId": "vehicle_form", "contents": [{{"key": "vehicle", "valueMap": [{{"key": "year", "valueString": ""}}, {{"key": "make", "valueString": ""}}, {{"key": "model", "valueString": ""}}, {{"key": "mileage", "valueString": ""}}, {{"key": "condition", "valueString": "good"}}]}}]}}}},
+  {{"dataModelUpdate": {{"surfaceId": "vehicle_form", "contents": [{{"key": "vehicle", "valueMap": [{{"key": "year", "valueString": "[EXTRACTED_YEAR]"}}, {{"key": "make", "valueString": "[EXTRACTED_MAKE]"}}, {{"key": "model", "valueString": "[EXTRACTED_MODEL]"}}, {{"key": "mileage", "valueString": "[EXTRACTED_MILEAGE]"}}]}}]}}}},
   {{"beginRendering": {{"surfaceId": "vehicle_form", "root": "form_container"}}}}
 ]
+
+CRITICAL: Replace [EXTRACTED_YEAR], [EXTRACTED_MAKE], [EXTRACTED_MODEL], [EXTRACTED_MILEAGE] with actual extracted values.
+If a value was NOT mentioned by the user, use an empty string "".
+Example: "I want to trade in my 2018 Toyota Camry" → year="2018", make="Toyota", model="Camry", mileage=""
 
 You MUST include ALL fields in the form: Year, Make, Model, Mileage, Condition dropdown, and Submit button.
 The button action MUST include context with paths to all form field values.
@@ -113,7 +128,7 @@ Calculate estimate based on: Excellent=$15k-20k, Good=$10k-15k, Fair=$5k-10k, Po
 # Define the vehicle intake agent with A2UI support
 root_agent = LlmAgent(
     name="vehicle_intake_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Collects vehicle information for trade-in evaluation",
     instruction=BASE_INSTRUCTION + A2UI_INSTRUCTION,
     output_key="vehicle_info"
