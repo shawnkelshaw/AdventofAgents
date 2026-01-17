@@ -36,7 +36,7 @@ function App() {
     try {
       const response = await clientRef.current.sendMessage(input)
       setMessages(prev => [...prev, response])
-      
+
       // Process dataModelUpdate messages to initialize form values
       if (response.a2uiJson) {
         setDataModel(prev => processDataModelUpdates(response.a2uiJson!, prev))
@@ -58,7 +58,7 @@ function App() {
     try {
       const response = await clientRef.current.sendAction({ name: actionName, context })
       setMessages(prev => [...prev, response])
-      
+
       // Process dataModelUpdate messages
       if (response.a2uiJson) {
         setDataModel(prev => processDataModelUpdates(response.a2uiJson!, prev))
@@ -78,7 +78,7 @@ function App() {
     setDataModel(prev => {
       const newModel = { ...prev }
       const parts = path.split('/').filter(p => p)
-      
+
       let current: any = newModel
       for (let i = 0; i < parts.length - 1; i++) {
         if (!current[parts[i]]) {
@@ -86,7 +86,7 @@ function App() {
         }
         current = current[parts[i]]
       }
-      
+
       current[parts[parts.length - 1]] = value
       return newModel
     })
@@ -114,21 +114,26 @@ function App() {
 
         {messages.map((message, index) => (
           <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'} rounded-lg p-4`}>
+            <div className={`
+              ${message.role === 'user' ? 'max-w-[80%] bg-primary text-primary-foreground' : 'w-full max-w-[90%] bg-muted'} 
+              rounded-lg p-4
+            `}>
               {message.role === 'user' ? (
                 <p>{message.content}</p>
               ) : (
-                <>
-                  <p className="mb-4">{clientRef.current.getTextContent(message.content)}</p>
+                <div className="flex flex-col gap-4">
+                  <p>{clientRef.current.getTextContent(message.content)}</p>
                   {message.a2uiJson && (
-                    <A2UIRenderer
-                      a2uiJson={message.a2uiJson}
-                      onAction={handleAction}
-                      dataModel={dataModel}
-                      onDataChange={handleDataChange}
-                    />
+                    <div className="w-full">
+                      <A2UIRenderer
+                        a2uiJson={message.a2uiJson}
+                        onAction={handleAction}
+                        dataModel={dataModel}
+                        onDataChange={handleDataChange}
+                      />
+                    </div>
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>

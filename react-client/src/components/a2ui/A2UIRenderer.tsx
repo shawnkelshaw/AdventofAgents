@@ -539,7 +539,7 @@ function renderCard(
   const childId = card.child;
 
   return (
-    <Card key={id}>
+    <Card key={id} className="w-full">
       <CardContent className="p-4">
         {childId && renderComponentById(childId, componentMap, onAction, dataModel, onDataChange)}
       </CardContent>
