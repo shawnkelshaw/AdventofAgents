@@ -10,6 +10,7 @@ from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCard, AgentSkill, AgentExtension
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
 # A2UI extension definition
 def get_a2ui_agent_extension():
@@ -75,6 +76,15 @@ def create_app():
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    # Health check endpoint
+    @app.route("/health")
+    async def health_check(request):
+        return JSONResponse({
+            "status": "healthy",
+            "version": "0.9",
+            "agent": "orchestrator_agent"
+        })
     
     return app
 
