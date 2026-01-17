@@ -115,7 +115,7 @@ function App() {
         {messages.map((message, index) => (
           <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`
-              ${message.role === 'user' ? 'max-w-[80%] bg-primary text-primary-foreground' : 'w-full max-w-[90%] bg-muted'} 
+              ${message.role === 'user' ? 'max-w-[80%] bg-primary text-primary-foreground' : 'max-w-[70%] bg-muted'} 
               rounded-lg p-4
             `}>
               {message.role === 'user' ? (
