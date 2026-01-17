@@ -403,16 +403,45 @@ A new React + shadcn/ui client has been built as an alternative to the Lit-based
 
 #### Files
 - **`react-client/`**: Complete React application
-- **`react-client/src/components/a2ui/A2UIRenderer.tsx`**: A2UI JSON renderer
-- **`react-client/src/components/ChatInterface.tsx`**: Main chat UI
+- **`react-client/src/components/a2ui/A2UIRenderer.tsx`**: A2UI JSON renderer (900+ lines)
+- **`react-client/src/components/ui/`**: shadcn/ui components (Button, Card, Input, Alert)
+- **`react-client/src/index.css`**: Tailwind v4 theme configuration
+
+#### Supported A2UI Components (12)
+| Component | Description |
+|-----------|-------------|
+| Card | Container with border and padding |
+| Button | Primary/outline/secondary/destructive variants |
+| TextField | Labeled text input with data binding |
+| Text | Styled text with h1-h5/body/caption hints |
+| Row | Horizontal flex container |
+| Column | Vertical flex container |
+| List | Vertical/horizontal list with children |
+| Divider | Horizontal/vertical separator |
+| Icon | Emoji-based icon mapping |
+| Image | URL-bound image with sizing hints |
+| CheckBox | Data-bound checkbox |
+| DateTimeInput | Date/time picker |
 
 #### Features
-- Built with React 18, TypeScript, Vite, Tailwind CSS, and shadcn/ui
+- Built with React 18, TypeScript, Vite, **Tailwind CSS v4**, and shadcn/ui
 - Connects to A2A server using `@a2a-js/sdk`
-- Renders A2UI JSON with ID-based component references
-- Supports: Card, Button, TextField, Text, Row, Column components
-- Handles `child` (single ID) and `children.explicitList` (array of IDs) references
-- Data binding with path-based values
+- **Schema Validation**: `validateA2UIJson()` validates JSON structure before rendering
+- **Error Boundary**: Catches rendering errors with retry option
+- **Input Sanitization**: Strips HTML, blocks dangerous URLs (XSS prevention)
+- **Unknown Component Logging**: Yellow placeholder + console warning for unsupported types
+- Data binding with path-based values (`/vehicle/year`)
+- Button variants: `primary`, `outline`, `secondary`, `ghost`, `destructive`, `link`
+
+#### Tailwind v4 Theme Setup
+The `index.css` uses `@theme` directive to bind CSS variables to Tailwind utilities:
+```css
+@theme {
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  /* ... */
+}
+```
 
 #### Running the React Client
 ```bash
@@ -425,10 +454,10 @@ cd react-client
 npm run dev
 ```
 
-Open http://localhost:5176
+Open http://localhost:5173
 
 ---
 
 **Status**: A2A/A2UI integration complete and fully functional  
-**Last Updated**: January 12, 2026  
-**Version**: 0.8 (Public Preview)
+**Last Updated**: January 17, 2026  
+**Version**: 0.9 (With Error Handling & Extended Components)

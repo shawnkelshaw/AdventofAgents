@@ -480,6 +480,11 @@ A2UI_SCHEMA = r'''
                         "type": "boolean",
                         "description": "Indicates if this button should be styled as the primary action."
                       },
+                      "variant": {
+                        "type": "string",
+                        "description": "The visual style of the button. Options: primary (blue filled), outline (border only), secondary (gray filled), ghost (no border), destructive (red), link (text only).",
+                        "enum": ["primary", "outline", "secondary", "ghost", "destructive", "link"]
+                      },
                       "action": {
                         "type": "object",
                         "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
