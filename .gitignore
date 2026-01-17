@@ -53,5 +53,5 @@ Thumbs.db
 # Logs
 *.log
 
-# A2UI (clone separately from https://github.com/google/A2UI)
-A2UI/
+# A2UI package (clone separately from https://github.com/google/A2UI)
+/A2UI/
