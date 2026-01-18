@@ -454,10 +454,104 @@ cd react-client
 npm run dev
 ```
 
+#### Testing and Quality Assurance
+Robust testing has been integrated for both backend and frontend components:
+
+**Backend (pytest)**: Validates A2UI JSON payloads against the strict official schema.
+```bash
+# Set PYTHONPATH and run pytest
+export PYTHONPATH=$PYTHONPATH:.
+python3 -m pytest tests/test_a2ui_schema.py
+```
+
+**Frontend (vitest)**: Tests `A2UIRenderer` logic, including schema validation, sanitization, and error handling.
+```bash
+cd react-client
+npm run test
+```
+
+---
+
+#### Architecture Consideration
+- **CORS**: Configured to allow all origins in dev, but should be restricted in production.
+- **Authentication**: Not implemented in this version, but documented in `docs/DEPLOYMENT.md`.
+- **Session Storage**: In-memory storage is used; persistent stores (like Redis) are recommended for production.
+
+---
+
 Open http://localhost:5173
 
 ---
 
-**Status**: A2A/A2UI integration complete and fully functional  
-**Last Updated**: January 17, 2026  
-**Version**: 0.9 (With Error Handling & Extended Components)
+## Milestone 5: Anam.ai Avatar Integration ✅
+
+### Overview
+
+An interactive speaking avatar has been integrated as an alternative to the form-based UI. Users can now choose between:
+
+1. **Form Mode**: Traditional chat + A2UI forms (powered by Gemini orchestrator)
+2. **Avatar Mode**: Voice-to-voice conversation with a real-time avatar (powered by Anam.ai LLM)
+
+### Implementation
+
+#### Backend Session Endpoint
+- **File**: `orchestrator_agent/server.py`
+- **Endpoint**: `GET /anam/session`
+- **Function**: Securely exchanges server-side API credentials for a client-safe session token
+
+```python
+@app.route("/anam/session")
+async def get_anam_session(request):
+    # Fetches session token from Anam API with personaConfig
+    response = await client.post(
+        "https://api.anam.ai/v1/auth/session-token",
+        headers={"Authorization": f"Bearer {api_key}"},
+        json={"personaConfig": {"personaId": persona_id}}
+    )
+    return JSONResponse(response.json())
+```
+
+#### Frontend Component
+- **File**: `react-client/src/components/anam/AnamAvatar.tsx`
+- **SDK**: `@anam-ai/js-sdk`
+- **Features**:
+  - Fetches session token from backend
+  - Initializes Anam client with `createClient(sessionToken)`
+  - Streams avatar video via `streamToVideoElement()`
+  - Synchronizes message history with React chat UI
+
+#### UI Mode Toggle
+- **File**: `react-client/src/App.tsx`
+- Header toggle between "Form" and "Avatar" modes
+- Avatar mode renders immersive video panel
+- Messages from Anam conversation are synced to chat history
+
+### Configuration
+
+Add your Anam credentials to `orchestrator_agent/.env`:
+
+```bash
+ANAM_API_KEY=your_anam_api_key_here
+ANAM_PERSONA_ID=your_persona_id_here
+```
+
+### Running
+
+```bash
+# Terminal 1: Start the A2A server (with Anam session endpoint)
+cd orchestrator_agent
+source .venv/bin/activate
+python server.py
+
+# Terminal 2: Start the React client
+cd react-client
+npm run dev
+```
+
+Open http://localhost:5174 and click "Avatar" in the header.
+
+---
+
+**Status**: A2A/A2UI/Anam integration complete and fully functional  
+**Last Updated**: January 18, 2026  
+**Version**: 1.0 (With Anam.ai Avatar Support)

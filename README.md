@@ -184,6 +184,14 @@ AdventofAgents/
 - [x] Dynamic calendar slot rendering (only render slots with valid data)
 - [x] Model update from gemini-2.0-flash-exp to gemini-2.0-flash (better rate limits)
 
+### Milestone 7: Anam.ai Avatar Integration ✅ CLOSED
+- [x] Add `/anam/session` endpoint to orchestrator server for secure token exchange
+- [x] Install `@anam-ai/js-sdk` in React client
+- [x] Implement `AnamAvatar.tsx` component with video streaming
+- [x] Add UI mode toggle (Form vs Avatar) in App header
+- [x] Synchronize Anam conversation messages with React chat history
+- [x] Document Anam integration in `docs/A2UI_INTEGRATION.md`
+
 ## Technical Details
 
 ### Calendar Agent Implementation

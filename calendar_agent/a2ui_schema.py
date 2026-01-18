@@ -706,7 +706,8 @@ A2UI_SCHEMA = r'''
                     },
                     "required": ["value"]
                   }
-                }
+                },
+                "additionalProperties": false
               }
             },
             "required": ["id", "component"]

@@ -9,8 +9,9 @@ from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCard, AgentSkill, AgentExtension
+import httpx
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
 # A2UI extension definition
 def get_a2ui_agent_extension():
@@ -85,6 +86,41 @@ def create_app():
             "version": "0.9",
             "agent": "orchestrator_agent"
         })
+    
+    # Anam session token endpoint
+    @app.route("/anam/session")
+    async def get_anam_session(request):
+        api_key = os.getenv("ANAM_API_KEY")
+        persona_id = os.getenv("ANAM_PERSONA_ID")
+        
+        if not api_key or api_key == "your_anam_api_key_here":
+            return JSONResponse({"error": "Anam API key not configured"}, status_code=500)
+        
+        if not persona_id:
+            return JSONResponse({"error": "Anam Persona ID not configured"}, status_code=500)
+            
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    "https://api.anam.ai/v1/auth/session-token",
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "personaConfig": {
+                            "personaId": persona_id
+                        }
+                    },
+                    timeout=10.0
+                )
+                response.raise_for_status()
+                data = response.json()
+                return JSONResponse(data)
+        except Exception as e:
+            logger.error(f"Error fetching Anam session: {e}")
+            return JSONResponse({"error": str(e)}, status_code=500)
+
     
     return app
 

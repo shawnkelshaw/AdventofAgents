@@ -4,14 +4,19 @@ import { A2UIRenderer, processDataModelUpdates } from './components/a2ui/A2UIRen
 import { Button } from './components/ui/button'
 import { Input } from './components/ui/input'
 import { Card, CardContent } from './components/ui/card'
+import AnamAvatar from './components/anam/AnamAvatar'
+import type { AnamAvatarHandle } from './components/anam/AnamAvatar'
+import { MessageSquare, Video } from 'lucide-react'
 
 function App() {
   const [messages, setMessages] = useState<A2AMessage[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [dataModel, setDataModel] = useState<Record<string, any>>({})
+  const [uiMode, setUiMode] = useState<'form' | 'avatar'>('form')
   const clientRef = useRef<A2AClient>(new A2AClient('http://localhost:10010'))
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const avatarRef = useRef<AnamAvatarHandle>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -95,13 +100,49 @@ function App() {
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
-      <div className="border-b p-4">
-        <h1 className="text-2xl font-bold">Vehicle Trade-In Assistant</h1>
-        <p className="text-sm text-muted-foreground">Powered by React + shadcn/ui</p>
+      <div className="border-b p-4 flex justify-between items-center bg-card">
+        <div>
+          <h1 className="text-2xl font-bold">Vehicle Trade-In Assistant</h1>
+          <p className="text-sm text-muted-foreground">Powered by React + shadcn/ui</p>
+        </div>
+        <div className="flex bg-muted p-1 rounded-lg">
+          <Button
+            variant={uiMode === 'form' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setUiMode('form')}
+            className="gap-2"
+          >
+            <MessageSquare className="h-4 w-4" />
+            Form
+          </Button>
+          <Button
+            variant={uiMode === 'avatar' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setUiMode('avatar')}
+            className="gap-2"
+          >
+            <Video className="h-4 w-4" />
+            Avatar
+          </Button>
+        </div>
       </div>
 
+      {/* Avatar Display Section */}
+      {uiMode === 'avatar' && (
+        <div className="p-4 bg-muted/30 border-b flex justify-center">
+          <div className="w-full max-w-3xl">
+            <AnamAvatar
+              ref={avatarRef}
+              onMessageReceived={(role, content) => {
+                setMessages(prev => [...prev, { role, content }]);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${uiMode === 'avatar' ? 'max-h-[30vh]' : ''}`}>
         {messages.length === 0 && (
           <Card>
             <CardContent className="pt-6">
